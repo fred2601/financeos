@@ -9,7 +9,7 @@ built on a fictional Danish retailer, **Fjordhus Retail A/S**.
 
 > **Live demo:** https://financeos-kappa-nine.vercel.app
 
-> Status: in development. **Milestones 1–3 (dashboard, budget vs actual, forecast) are complete**; Milestone 4 (scenarios) is next.
+> Status: in development. **Milestones 1–4 (dashboard, budget vs actual, forecast, scenarios) are complete — the MVP.** Milestone 5 (CSV/Excel import) is next.
 > See [`docs/ROADMAP.md`](docs/ROADMAP.md).
 
 ## Features
@@ -19,7 +19,7 @@ built on a fictional Danish retailer, **Fjordhus Retail A/S**.
 | Executive dashboard | How are we doing this month and year-to-date versus budget and last month? |
 | Budget vs actual | Which accounts, departments and categories drive the deviation? Price/volume/mix split and EBITDA bridge. |
 | Forecasting | Where will revenue, gross profit and EBITDA land, given units and price assumptions? Editable drivers with visible formulas. |
-| Scenarios | What happens to EBITDA in a best/base/worst case? |
+| Scenarios | What happens to EBITDA in a best/base/worst case? Live levers, comparison and sensitivities. |
 | AI analyst (optional) | A concise management summary based only on validated numbers. |
 
 ## Tech stack

@@ -8,7 +8,7 @@ Rule: the app runs, tests pass and a Git commit is made at the end of every mile
 | **M1** ✅ | Foundation, fictional data, finance engine, executive dashboard | 10–12 h | 1 |
 | **M2** ✅ | Budget vs actual analysis (filters, account table, breakdowns) | 6–8 h | 2 |
 | **M3** ✅ | Driver-based forecast (units × ASP, editable assumptions, formula view) | 5–7 h | 2–3 |
-| M4 | Scenario analysis (base/best/worst, sliders, comparison) | 4–6 h | 3 |
+| **M4** ✅ | Scenario analysis (base/best/worst, sliders, comparison) | 4–6 h | 3 |
 | M5 | CSV/Excel import with validation | 3–5 h | 3–4 |
 | M6 | AI financial analyst (optional) | 3–4 h | 4 |
 | M7 | Polish, responsive QA, docs, demo script, final deploy | 2–3 h | 4 |
@@ -93,10 +93,12 @@ month of the fictional company, every number comes from tested functions, `npm t
 - [x] "Show formulas" view with the actual numbers plugged in; assumptions stored in the URL (shareable link)
 - [x] Tests for the forecast engine, view-model and URL handling
 
-### M4 — Scenarios
-- [ ] Base / best / worst presets; sliders for sales growth, gross margin, opex change
-- [ ] Live EBITDA recalculation and side-by-side comparison chart/table
-- [ ] Tests for scenario engine
+### M4 — Scenarios ✅
+- [x] Worst / base / best presets; editable sales growth, gross margin (pp) and opex change per scenario
+- [x] Live EBITDA recalculation, side-by-side scenario cards, full-year and monthly EBITDA charts
+- [x] Comparison table with best–worst spread; closed-form EBITDA formula and base-case sensitivities
+- [x] Ordering warning; levers stored in a shareable URL
+- [x] Tests for the scenario engine and view-model (engine = closed form, URL round-trip)
 
 ### M5 — Import
 - [ ] CSV + Excel upload, column mapping to the fact schema, zod validation with row-level errors

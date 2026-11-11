@@ -1,6 +1,6 @@
 # FinanceOS — Architecture, Data Schema & Formulas
 
-> Status: approved 2026-11-11. Milestones 1–3 implemented.
+> Status: approved 2026-11-11. Milestones 1–4 implemented.
 > All company data in FinanceOS is **fictional** unless a user imports their own.
 
 ---
@@ -286,6 +286,21 @@ COGS scaled with volume; base revenue without units (no ASP) gives `null`. QA re
 (growth/price −50 % to +100 %, margin ±20 pp) and stored in the URL, e.g.
 `/forecast?units=2,2,3&price=2,2,2&margin=0,0,0&opex=3.5,2,3,3,5,2`.
 
+### Scenario analysis (`lib/finance/scenarios.ts`)
+
+Three scenarios (worst / base / best), each with three company-level levers applied to
+the base year: sales growth *s* (as volume at unchanged prices and mix), gross margin
+change *m* (percentage points, every category) and opex change *o* (every account).
+They are translated into forecast drivers (`leversToAssumptions`), so the tested forecast
+engine produces the monthly results. Full-year EBITDA has a closed form, used for the
+formula panel and sensitivities, and tested to equal the engine:
+
+    EBITDA = (1 + s) × (GP₀ + m × Revenue₀) − (1 + o) × Opex₀
+
+Sensitivities (base case): +1 % sales → 0,01 × (GP₀ + m × Revenue₀); +1 pp margin →
+0,01 × Revenue₀ × (1 + s); +1 % opex → −0,01 × Opex₀. A warning appears if EBITDA is not
+ordered worst ≤ base ≤ best. URL: `/scenarios?worst=-3,-1.5,4.5&base=4,0,3&best=8,1,2`.
+
 ### Filter scope on Budget vs actual
 - **Category** filters revenue, COGS and gross profit. Opex is not allocated to categories.
 - **Department** filters operating expenses. Revenue is not booked on departments.
@@ -316,4 +331,5 @@ AI analyst (M6), explanations must be labelled as **facts** (validated numbers),
 - Rent is treated as operating expense (pre-IFRS 16 management view), so EBITDA is lower than an IFRS 16 EBITDA would be.
 - Materiality thresholds are fixed company-wide (not per account or per period length).
 - Forecast drivers apply evenly to all months and the base year is used as reported (one-offs are not normalised automatically). No calendar effects; forecast units are fractional (shown rounded).
+- Scenario levers are company-wide: sales growth is pure volume (no price/mix split) and opex does not flex automatically with sales.
 - Mix is measured on units across categories with very different prices; a value-based mix would give different (equally valid) splits.
