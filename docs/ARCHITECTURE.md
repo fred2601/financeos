@@ -1,6 +1,6 @@
 # FinanceOS — Architecture, Data Schema & Formulas
 
-> Status: approved 2026-11-11. Milestones 1–2 implemented.
+> Status: approved 2026-11-11. Milestones 1–3 implemented.
 > All company data in FinanceOS is **fictional** unless a user imports their own.
 
 ---
@@ -264,6 +264,26 @@ units, there is no budget price and the analysis returns `null` ("n/a").
 **EBITDA bridge:** budget EBITDA → GP volume & mix → price → product cost → each opex account
 (budget − actual) → actual EBITDA.
 
+### Driver-based forecast (`lib/finance/forecast.ts`)
+
+Base year = last full fiscal year of actuals (FY2025). Each FY2026 month is built from the
+same month of the base year, so seasonality is preserved:
+
+| Line | Formula |
+|---|---|
+| Units | units_base × (1 + unit growth) |
+| Average selling price | ASP_base × (1 + price change) |
+| Revenue | units_F × ASP_F |
+| Gross margin | GM%_base + margin change (pp) |
+| COGS | revenue_F × (1 − GM%_F) |
+| Opex (per account) | opex_base × (1 + cost growth) |
+| EBITDA | revenue_F − COGS_F − opex_F |
+
+Because drivers apply evenly to all months, the same formulas hold for full-year totals
+(tested), which is what the "Show formulas" view displays. Assumptions are clamped
+(growth/price −50 % to +100 %, margin ±20 pp) and stored in the URL, e.g.
+`/forecast?units=2,2,3&price=2,2,2&margin=0,0,0&opex=3.5,2,3,3,5,2`.
+
 ### Filter scope on Budget vs actual
 - **Category** filters revenue, COGS and gross profit. Opex is not allocated to categories.
 - **Department** filters operating expenses. Revenue is not booked on departments.
@@ -293,4 +313,5 @@ AI analyst (M6), explanations must be labelled as **facts** (validated numbers),
 - Seed data is synthetic and simplified (no VAT, inventory, balance sheet or cash flow).
 - Rent is treated as operating expense (pre-IFRS 16 management view), so EBITDA is lower than an IFRS 16 EBITDA would be.
 - Materiality thresholds are fixed company-wide (not per account or per period length).
+- Forecast drivers apply evenly to all months and the base year is used as reported (one-offs are not normalised automatically).
 - Mix is measured on units across categories with very different prices; a value-based mix would give different (equally valid) splits.

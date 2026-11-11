@@ -7,7 +7,7 @@ Rule: the app runs, tests pass and a Git commit is made at the end of every mile
 |---|---|---|---|
 | **M1** ✅ | Foundation, fictional data, finance engine, executive dashboard | 10–12 h | 1 |
 | **M2** ✅ | Budget vs actual analysis (filters, account table, breakdowns) | 6–8 h | 2 |
-| M3 | Driver-based forecast (units × ASP, editable assumptions, formula view) | 5–7 h | 2–3 |
+| **M3** ✅ | Driver-based forecast (units × ASP, editable assumptions, formula view) | 5–7 h | 2–3 |
 | M4 | Scenario analysis (base/best/worst, sliders, comparison) | 4–6 h | 3 |
 | M5 | CSV/Excel import with validation | 3–5 h | 3–4 |
 | M6 | AI financial analyst (optional) | 3–4 h | 4 |
@@ -87,11 +87,11 @@ month of the fictional company, every number comes from tested functions, `npm t
 - [x] EBITDA bridge (waterfall) from budget to actual
 - [x] Materiality threshold (1 % and 50 t.kr.; 0,1 pp for margins), also applied on the dashboard
 
-### M3 — Forecast
-- [ ] FY2026 monthly forecast: units × ASP per category with editable growth/ASP assumptions
-- [ ] Gross margin % and opex assumptions → gross profit and EBITDA forecast
-- [ ] "Show formula" panel for each line; assumptions stored in URL/localStorage
-- [ ] Tests for forecast engine
+### M3 — Forecast ✅
+- [x] FY2026 monthly forecast: units × ASP per category with editable unit growth and price change
+- [x] Gross margin change (pp) per category and cost growth per opex account → gross profit and EBITDA
+- [x] "Show formulas" view with the actual numbers plugged in; assumptions stored in the URL (shareable link)
+- [x] Tests for the forecast engine, view-model and URL handling
 
 ### M4 — Scenarios
 - [ ] Base / best / worst presets; sliders for sales growth, gross margin, opex change

@@ -22,7 +22,7 @@ interface NavItem {
 const NAV: NavItem[] = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, available: true },
   { href: "/variance", label: "Budget vs actual", icon: ArrowLeftRight, available: true },
-  { href: "/forecast", label: "Forecast", icon: ChartNoAxesCombined, available: false },
+  { href: "/forecast", label: "Forecast", icon: ChartNoAxesCombined, available: true },
   { href: "/scenarios", label: "Scenarios", icon: Layers, available: false },
   { href: "/analyst", label: "AI analyst", icon: Sparkles, available: false },
 ];

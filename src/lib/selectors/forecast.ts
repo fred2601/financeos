@@ -15,7 +15,7 @@ import {
 import { computeMetrics, type PnlMetrics } from "@/lib/finance/metrics";
 import { parsePeriod, periodShortLabel, toPeriod } from "@/lib/finance/periods";
 import { sumStrict, type Maybe } from "@/lib/finance/safe-math";
-import { compareMetric, METRIC_PROFILE, type Comparison, type MetricKind } from "@/lib/finance/variance";
+import { compareMetric, METRIC_PROFILE, percentVariance, type Comparison, type MetricKind } from "@/lib/finance/variance";
 
 /**
  * Forecast page: base-year extraction (server), URL ⇄ assumptions, and the view-model.
@@ -135,6 +135,8 @@ export interface CategoryFormula {
   aspForecast: Maybe;
   revenueBase: Maybe;
   revenueForecast: Maybe;
+  /** Forecast vs base year, fraction. */
+  revenueChange: Maybe;
   grossMarginBase: Maybe;
   marginChange: number;
   grossMarginForecast: Maybe;
@@ -167,6 +169,7 @@ export interface ForecastViewModel {
   chart: ForecastChartPoint[];
   categories: CategoryFormula[];
   opex: OpexFormula[];
+  grossProfit: { base: Maybe; forecast: Maybe };
   opexTotal: { base: Maybe; forecast: Maybe };
   ebitda: { base: Maybe; forecast: Maybe };
   months: MonthRow[];
@@ -251,6 +254,7 @@ export function buildForecastView(base: ForecastBase, assumptions: ForecastAssum
       aspForecast: f.averageSellingPrice,
       revenueBase: b.revenue,
       revenueForecast: f.revenue,
+      revenueChange: percentVariance(f.revenue, b.revenue),
       grossMarginBase: b.grossMargin,
       marginChange: a.marginChange,
       grossMarginForecast: f.grossMargin,
@@ -287,6 +291,7 @@ export function buildForecastView(base: ForecastBase, assumptions: ForecastAssum
     chart,
     categories,
     opex,
+    grossProfit: { base: baseYear.grossProfit, forecast: fcYear.grossProfit },
     opexTotal: { base: baseYear.opex, forecast: fcYear.opex },
     ebitda: { base: baseYear.ebitda, forecast: fcYear.ebitda },
     months,
