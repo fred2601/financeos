@@ -279,6 +279,12 @@ same month of the base year, so seasonality is preserved:
 | Opex (per account) | opex_base × (1 + cost growth) |
 | EBITDA | revenue_F − COGS_F − opex_F |
 
+**Price convention:** a price change with 0 pp margin change keeps the gross margin %
+constant, i.e. product costs are assumed to rise in line with prices (cost inflation passed
+through). To model a price rise that is *not* matched by costs, add the margin effect via the
+margin lever. This differs deliberately from the Budget vs actual bridge, which analyses
+history and values price at 100 % flow-through.
+
 Because drivers apply evenly to all months, the same formulas hold for full-year totals
 (tested), which is what the "Show formulas" view displays. Zero base revenue keeps
 COGS scaled with volume; base revenue without units (no ASP) gives `null`. QA report:
@@ -297,8 +303,9 @@ formula panel and sensitivities, and tested to equal the engine:
 
     EBITDA = (1 + s) × (GP₀ + m × Revenue₀) − (1 + o) × Opex₀
 
-Sensitivities (base case): +1 % sales → 0,01 × (GP₀ + m × Revenue₀); +1 pp margin →
-0,01 × Revenue₀ × (1 + s); +1 % opex → −0,01 × Opex₀. A warning appears if EBITDA is not
+Sensitivities (base case), each lever +1 percentage point: sales growth → 0,01 × (GP₀ + m × Revenue₀);
+gross margin → 0,01 × Revenue₀ × (1 + s); opex change → −0,01 × Opex₀. (+1 pp of growth = 1 % of the
+base-year amount, not 1 % of the scenario amount.) A warning appears if EBITDA is not
 ordered worst ≤ base ≤ best. URL: `/scenarios?worst=-3,-1.5,4.5&base=4,0,3&best=8,1,2`.
 
 ### Filter scope on Budget vs actual

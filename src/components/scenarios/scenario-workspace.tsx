@@ -174,13 +174,17 @@ export function ScenarioWorkspace({ base, initial }: { base: ForecastBase; initi
             <div>
               <div className="mb-1.5 text-[13px] font-medium">Sensitivity (base case)</div>
               <dl className="num grid grid-cols-[1fr_auto] gap-y-1 text-sm">
-                <dt className="text-muted-foreground">+1 % sales growth</dt>
+                <dt className="text-muted-foreground">Sales growth +1 pp</dt>
                 <dd className="text-right">{formatDkk(vm.sensitivity.sales, { signed: true })}</dd>
-                <dt className="text-muted-foreground">+1 pp gross margin</dt>
+                <dt className="text-muted-foreground">Gross margin +1 pp</dt>
                 <dd className="text-right">{formatDkk(vm.sensitivity.margin, { signed: true })}</dd>
-                <dt className="text-muted-foreground">+1 % operating expenses</dt>
+                <dt className="text-muted-foreground">Opex change +1 pp</dt>
                 <dd className="text-right">{formatDkk(vm.sensitivity.opex, { signed: true })}</dd>
               </dl>
+              <p className="mt-1.5 text-xs text-muted-foreground">
+                Each lever raised by one percentage point, e.g. sales growth from 4 % to 5 %. For sales and opex this
+                equals 1 % of the {vm.baseLabel} amount.
+              </p>
             </div>
             <p className="text-xs text-muted-foreground">
               ₀ = {vm.baseLabel}. Amounts in the formula are rounded for display.
