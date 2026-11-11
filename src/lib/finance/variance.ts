@@ -1,4 +1,5 @@
 import type { Direction } from "@/lib/data/chart-of-accounts";
+import { DEFAULT_MATERIALITY, isMaterialAmount, isMaterialRatio, type Materiality } from "./materiality";
 import { safeDivide, safeSubtract, type Maybe } from "./safe-math";
 import type { PnlMetrics } from "./metrics";
 
@@ -32,32 +33,48 @@ export interface Comparison {
   absolute: Maybe;
   /** (actual − reference) / |reference|. Null for ratio metrics, where only the pp change is meaningful. */
   percent: Maybe;
+  /** Whether the variance passes the materiality thresholds. */
+  material: boolean;
+  /** favorable/unfavorable only when material; otherwise "neutral" (on budget). */
   status: Favorability;
 }
 
-export type MetricKind = "amount" | "ratio";
+/**
+ * amount = DKK totals; ratio = margins (compared in percentage points);
+ * driver = units or prices (materiality judged on % only, as DKK thresholds don't apply).
+ */
+export type MetricKind = "amount" | "ratio" | "driver";
 
 export function compare(
   actual: Maybe,
   reference: Maybe,
   direction: Direction,
   kind: MetricKind = "amount",
+  materiality: Materiality = DEFAULT_MATERIALITY,
 ): Comparison {
   const absolute = absoluteVariance(actual, reference);
+  const percent = kind === "ratio" ? null : percentVariance(actual, reference);
+  const material =
+    kind === "ratio"
+      ? isMaterialRatio(absolute, materiality)
+      : kind === "driver"
+        ? absolute !== null && (percent === null ? absolute !== 0 : Math.abs(percent) >= materiality.percent)
+        : isMaterialAmount(absolute, percent, materiality);
   return {
     actual,
     reference,
     absolute,
-    percent: kind === "ratio" ? null : percentVariance(actual, reference),
-    status: favorability(absolute, direction),
+    percent,
+    material,
+    status: material ? favorability(absolute, direction) : "neutral",
   };
 }
 
 /** Direction and kind of each P&L metric. */
 export const METRIC_PROFILE: Record<keyof PnlMetrics, { direction: Direction; kind: MetricKind }> = {
   revenue: { direction: "higher-is-better", kind: "amount" },
-  units: { direction: "higher-is-better", kind: "amount" },
-  averageSellingPrice: { direction: "higher-is-better", kind: "amount" },
+  units: { direction: "higher-is-better", kind: "driver" },
+  averageSellingPrice: { direction: "higher-is-better", kind: "driver" },
   cogs: { direction: "lower-is-better", kind: "amount" },
   grossProfit: { direction: "higher-is-better", kind: "amount" },
   grossMargin: { direction: "higher-is-better", kind: "ratio" },
