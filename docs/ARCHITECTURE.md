@@ -1,6 +1,6 @@
 # FinanceOS — Architecture, Data Schema & Formulas
 
-> Status: approved 2026-11-11. Milestones 1–4 implemented.
+> Status: approved 2026-11-11. Milestones 1–4 and 6 implemented (5, import, deferred).
 > All company data in FinanceOS is **fictional** unless a user imports their own.
 
 ---
@@ -321,6 +321,30 @@ AI analyst (M6), explanations must be labelled as **facts** (validated numbers),
 
 ---
 
+## AI financial analyst (`lib/analyst/`, `app/api/analyst/route.ts`)
+
+Goal: a concise management summary that **cannot invent numbers**.
+
+1. **Fact sheet** (`fact-sheet.ts`): ~40 aggregated figures for the selected period/view, built
+   with the dashboard and variance selectors and formatted by `lib/format`. Each fact has an id
+   (`F1`…), label, value and the app's own status (favorable / unfavorable / on budget). No
+   transaction-level records.
+2. **Prompt** (`prompt.ts`): static system prompt (rules) + the fact sheet in the user message.
+3. **Model call** (route handler, server only): `claude-opus-5-5`, effort `medium`, structured
+   output via `betaZodOutputFormat` (headline, summary, facts, hypotheses with "how to verify",
+   recommendations), server-side refusal fallback enabled. The browser sends only
+   `{ period, view }`; the server rebuilds the fact sheet.
+4. **Validation** (`output.ts`): the model must reference figures as `{{F#}}`. Any digit or
+   number word outside a placeholder, an unknown id, or a "fact" without a cited figure →
+   the statement is removed and counted. The server substitutes the validated values.
+5. **Guards** (`guards.ts`): results cached per period/view (data is static) and a per-client
+   rate limit (5 fresh analyses / 10 min), both in memory. The real cost control is a spend
+   limit on the API key.
+
+Privacy: only the fact sheet is sent, after an explicit consent tick in the UI.
+`ANTHROPIC_API_KEY` is read only in the route handler; without it the endpoint returns 503
+and the page still shows the fact sheet.
+
 ## 6. Security & privacy
 
 - No secrets in the repo. `.env.local` is git-ignored; `.env.example` documents variable names.
@@ -333,6 +357,7 @@ AI analyst (M6), explanations must be labelled as **facts** (validated numbers),
 ## 7. Known limitations (to be kept up to date)
 
 - Single company, single currency (DKK), calendar fiscal year.
+- AI analyst: hypotheses and recommendations are model-generated suggestions; only the figures are guaranteed. The in-memory cache and rate limit are per server instance.
 - No user accounts or persistence (by design, until needed).
 - Seed data is synthetic and simplified (no VAT, inventory, balance sheet or cash flow).
 - Rent is treated as operating expense (pre-IFRS 16 management view), so EBITDA is lower than an IFRS 16 EBITDA would be.

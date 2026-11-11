@@ -9,7 +9,7 @@ built on a fictional Danish retailer, **Fjordhus Retail A/S**.
 
 > **Live demo:** https://financeos-kappa-nine.vercel.app
 
-> Status: in development. **Milestones 1–4 (dashboard, budget vs actual, forecast, scenarios) are complete — the MVP.** Milestone 5 (CSV/Excel import) is next.
+> Status: in development. **Milestones 1–4 (the MVP) and 6 (AI analyst) are complete.** CSV/Excel import (M5) is deferred.
 > See [`docs/ROADMAP.md`](docs/ROADMAP.md).
 
 ## Features
@@ -20,7 +20,7 @@ built on a fictional Danish retailer, **Fjordhus Retail A/S**.
 | Budget vs actual | Which accounts, departments and categories drive the deviation? Price/volume/mix split and EBITDA bridge. |
 | Forecasting | Where will revenue, gross profit and EBITDA land, given units and price assumptions? Editable drivers with visible formulas. |
 | Scenarios | What happens to EBITDA in a best/base/worst case? Live levers, comparison and sensitivities. |
-| AI analyst (optional) | A concise management summary based only on validated numbers. |
+| AI analyst | A concise management summary based only on validated numbers: facts, hypotheses and recommendations kept apart; the model cannot write its own figures. |
 
 ## Tech stack
 
@@ -66,11 +66,14 @@ Open http://localhost:3000.
 
 ### Environment variables
 
-Not needed until the optional AI analyst (Milestone 6). Copy `.env.example` to `.env.local`:
+Only needed for the AI analyst. Copy `.env.example` to `.env.local` (and add the same variable in Vercel → Project → Settings → Environment Variables for the live site):
 
 ```
 ANTHROPIC_API_KEY=   # server-side only, never exposed to the browser
 ```
+
+Without a key the AI analyst page still shows its fact sheet and explains that the feature is not configured.
+Set a monthly spend limit on the key in the Anthropic Console: the live demo is public.
 
 ## How it works
 

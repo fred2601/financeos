@@ -61,6 +61,7 @@ data schema and formulas and `docs/ROADMAP.md` for the current milestone.
 - Never commit secrets. Secrets go in `.env.local` (git-ignored); document names in `.env.example`.
 - `ANTHROPIC_API_KEY` is server-only (route handlers). Never use a `NEXT_PUBLIC_` prefix for secrets.
 - Never send imported/user data to an external AI service without explicit opt-in in the UI.
+- AI analyst: the model only sees the fact sheet (`lib/analyst/fact-sheet.ts`) and may reference figures only as `{{F#}}` placeholders; keep the validator in `lib/analyst/output.ts` strict. Add new figures to the fact sheet, never to the prompt text.
 - Validate every CSV/Excel import with zod and show row-level errors.
 
 ## Docs

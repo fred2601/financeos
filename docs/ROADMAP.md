@@ -9,8 +9,8 @@ Rule: the app runs, tests pass and a Git commit is made at the end of every mile
 | **M2** ✅ | Budget vs actual analysis (filters, account table, breakdowns) | 6–8 h | 2 |
 | **M3** ✅ | Driver-based forecast (units × ASP, editable assumptions, formula view) | 5–7 h | 2–3 |
 | **M4** ✅ | Scenario analysis (base/best/worst, sliders, comparison) | 4–6 h | 3 |
-| M5 | CSV/Excel import with validation | 3–5 h | 3–4 |
-| M6 | AI financial analyst (optional) | 3–4 h | 4 |
+| M5 | CSV/Excel import with validation (deferred) | 3–5 h | 3–4 |
+| **M6** ✅ | AI financial analyst (optional) | 3–4 h | 4 |
 | M7 | Polish, responsive QA, docs, demo script, final deploy | 2–3 h | 4 |
 
 Priority if time runs short: M1 → M2 → M3 → M4 are the **MVP**. M5 and M6 are stretch goals.
@@ -105,10 +105,13 @@ month of the fictional company, every number comes from tested functions, `npm t
 - [ ] Imported data stays in the browser; clear "your data" vs "fictional data" indicator
 - [ ] Library choice: decide between SheetJS (official CDN build — the npm `xlsx` package is outdated) and ExcelJS
 
-### M6 — AI analyst
-- [ ] Server route calls Anthropic API with **pre-computed** metrics only
-- [ ] Output structured as Facts / Hypotheses / Recommendations; numbers cross-checked against inputs
-- [ ] Explicit opt-in before sending imported data; key only in server env vars
+### M6 — AI analyst ✅
+- [x] Server route calls the Anthropic API (`claude-opus-5-5`) with a **pre-computed fact sheet** only
+- [x] Structured output: headline, summary, facts, hypotheses (with how to verify), recommendations
+- [x] Numbers only via `{{F#}}` placeholders; server-side validation removes any other number; values inserted from the fact sheet
+- [x] Explicit consent before sending; key only in server env vars; 503 state when not configured
+- [x] Result cache and per-client rate limit; tests for fact sheet, validator, guards and route (mocked model)
+- [ ] Set `ANTHROPIC_API_KEY` in Vercel and verify a live analysis (owner action)
 
 ### M7 — Polish
 - [ ] Responsive QA, accessibility pass, demo walkthrough script for interviews, screenshots in README

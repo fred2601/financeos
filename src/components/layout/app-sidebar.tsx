@@ -24,7 +24,7 @@ const NAV: NavItem[] = [
   { href: "/variance", label: "Budget vs actual", icon: ArrowLeftRight, available: true },
   { href: "/forecast", label: "Forecast", icon: ChartNoAxesCombined, available: true },
   { href: "/scenarios", label: "Scenarios", icon: Layers, available: true },
-  { href: "/analyst", label: "AI analyst", icon: Sparkles, available: false },
+  { href: "/analyst", label: "AI analyst", icon: Sparkles, available: true },
 ];
 
 function Logo() {
