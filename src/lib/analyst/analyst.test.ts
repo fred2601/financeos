@@ -81,6 +81,44 @@ describe("statement validation", () => {
   });
 });
 
+describe("fact grounding checks", () => {
+  const rev = find("Revenue — variance vs budget"); // favorable
+  const gm = find("Gross margin — variance vs budget"); // unfavorable
+  const opex = find("Operating expenses — variance vs budget"); // within threshold
+  const run = (text: string) => validateAnalysis(
+    { headline: "Results", summary: "Overview {{F1}}.", facts: [{ text }], hypotheses: [], recommendations: [] },
+    sheet,
+  );
+
+  it("accepts a fact whose wording matches the cited statuses", () => {
+    expect(run(`Revenue was favorable at {{${rev?.id}}}, while gross margin was unfavorable at {{${gm?.id}}}.`).facts).toHaveLength(1);
+  });
+  it.each([
+    [`Revenue rose {{${"F5"}}} because of the webshop.`, "cause"],
+    [`Revenue was {{${"F5"}}}, driven by e-commerce.`, "cause"],
+  ])("rejects causal wording in facts: %s", (text) => {
+    const v = run(text);
+    expect(v.facts).toHaveLength(0);
+    expect(v.rejected[0].reason).toMatch(/cause/);
+  });
+  it("rejects calling a within-threshold figure unfavorable", () => {
+    const v = run(`Operating expenses were unfavorable at {{${opex?.id}}}.`);
+    expect(v.facts).toHaveLength(0);
+    expect(v.rejected[0].reason).toMatch(/unfavorable/);
+  });
+  it("rejects calling an unfavorable figure favorable", () => {
+    const v = run(`Gross margin was favorable at {{${gm?.id}}}.`);
+    expect(v.facts).toHaveLength(0);
+  });
+  it("still allows causal language in hypotheses", () => {
+    const v = validateAnalysis(
+      { headline: "Results", summary: "Overview {{F1}}.", facts: [], hypotheses: [{ text: "The price effect may be due to markdowns.", verify: "Check markdown reports." }], recommendations: [] },
+      sheet,
+    );
+    expect(v.hypotheses).toHaveLength(1);
+  });
+});
+
 describe("analysis validation", () => {
   const output: AnalystOutput = {
     headline: "Revenue ahead of budget, Fashion behind",
@@ -115,7 +153,7 @@ describe("analysis validation", () => {
   });
 });
 
-import { RateLimiter, TtlCache } from "./guards";
+import { RateLimiter } from "./guards";
 
 describe("demo guards", () => {
   it("rate limiter allows up to the limit per window", () => {
@@ -125,11 +163,5 @@ describe("demo guards", () => {
     expect(rl.allow("a", 20)).toBe(false);
     expect(rl.allow("b", 20)).toBe(true);
     expect(rl.allow("a", 1_011)).toBe(true);
-  });
-  it("cache expires entries after the TTL", () => {
-    const c = new TtlCache<string>(100);
-    c.set("k", "v", 0);
-    expect(c.get("k", 99)).toBe("v");
-    expect(c.get("k", 100)).toBeUndefined();
   });
 });

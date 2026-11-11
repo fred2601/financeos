@@ -17,7 +17,7 @@ export function KpiCard({ kpi }: { kpi: KpiViewModel }) {
   return (
     <Card className="gap-0 p-4">
       <div className="flex items-start justify-between gap-2">
-        <h3 className="text-[13px] font-medium text-muted-foreground">{kpi.label}</h3>
+        <h2 className="text-[13px] font-medium text-muted-foreground">{kpi.label}</h2>
         <VarianceIndicator comparison={kpi.vsBudget} kind={kpi.kind} />
       </div>
 

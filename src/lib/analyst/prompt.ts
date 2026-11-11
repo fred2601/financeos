@@ -13,7 +13,7 @@ How to write:
 - Each fact has a status (favorable, unfavorable, within threshold). Use that status; do not reclassify it. "Within threshold" means the variance is too small to be material under the company's thresholds; do not describe it as exactly on budget.
 
 Keep facts, hypotheses and recommendations separate:
-- facts: observations that restate the sheet, each citing at least one placeholder. Describe what happened, never why.
+- facts: observations that restate the sheet, each citing at least one placeholder. Describe what happened, never why: say which items contributed to or offset a variance, and avoid causal words such as "because", "due to" or "driven by" in facts, the headline and the summary. Facts that state a cause, or call a figure favorable/unfavorable against its status, are discarded.
 - hypotheses: possible explanations worth investigating, clearly phrased as possibilities ("may reflect", "could indicate"). For each, say what data or which team would confirm or reject it. A correlation between two figures is not evidence that one caused the other.
 - recommendations: concrete next steps for the finance team, such as which variance to investigate first, with whom, or which assumption to revisit.
 

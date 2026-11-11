@@ -130,7 +130,7 @@ export function ForecastWorkspace({ base, initial }: { base: ForecastBase; initi
             return (
               <Card key={k.key} className="gap-0 p-4">
                 <div className="flex items-start justify-between gap-2">
-                  <h3 className="text-[13px] font-medium text-muted-foreground">{k.label}</h3>
+                  <h2 className="text-[13px] font-medium text-muted-foreground">{k.label}</h2>
                   <VarianceIndicator comparison={k.comparison} kind={k.kind} />
                 </div>
                 <div className="num mt-2 text-xl font-semibold tracking-tight">{v(k.comparison.actual)}</div>

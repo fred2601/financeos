@@ -80,14 +80,44 @@ export function checkStatement(text: string, factsById: Map<string, Fact>, requi
   return { ok: true, value: { segments, factIds } };
 }
 
+const CAUSAL =
+  /\b(because|due to|caused|causing|driven by|thanks to|as a result|resulting from|resulted in|led to|leading to|owing to|attributable to)\b/i;
+const SAYS_UNFAVORABLE = /\bunfavou?rabl[ey]\b/i;
+const SAYS_FAVORABLE = /(?<!un)\bfavou?rabl[ey]\b/i;
+
+/**
+ * Extra checks for statements presented as facts:
+ *  - no causal claims (those belong in hypotheses);
+ *  - "favorable"/"unfavorable" must match the status of at least one cited fact.
+ */
+export function checkFactStatement(text: string, value: ValidatedStatement, factsById: Map<string, Fact>): string | null {
+  const free = text.replace(PLACEHOLDER, " ");
+  if (CAUSAL.test(free)) return "states a cause; causes belong in hypotheses";
+  const statuses = new Set(value.factIds.map((id) => factsById.get(id)?.status));
+  if (SAYS_UNFAVORABLE.test(free) && !statuses.has("unfavorable"))
+    return "calls a figure unfavorable that the fact sheet does not";
+  if (SAYS_FAVORABLE.test(free.replace(/\bunfavou?rabl[ey]\b/gi, " ")) && !statuses.has("favorable"))
+    return "calls a figure favorable that the fact sheet does not";
+  return null;
+}
+
 export function validateAnalysis(output: AnalystOutput, sheet: FactSheet): ValidatedAnalysis {
   const byId = new Map(sheet.facts.map((f) => [f.id, f]));
   const rejected: ValidatedAnalysis["rejected"] = [];
   const keep = (section: string, text: string, requireFact = false): ValidatedStatement | null => {
     const r = checkStatement(text, byId, requireFact);
-    if (r.ok) return r.value;
-    rejected.push({ section, reason: r.reason });
-    return null;
+    if (!r.ok) {
+      rejected.push({ section, reason: r.reason });
+      return null;
+    }
+    if (section === "facts" || section === "summary") {
+      const reason = checkFactStatement(text, r.value, byId);
+      if (reason) {
+        rejected.push({ section, reason });
+        return null;
+      }
+    }
+    return r.value;
   };
   const fallback = (text: string): ValidatedStatement => ({ segments: [{ type: "text", text }], factIds: [] });
 

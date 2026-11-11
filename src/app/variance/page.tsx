@@ -154,7 +154,7 @@ function SummaryCard({ item }: { item: SummaryItem }) {
     <Card className="gap-0 p-4">
       <div className="flex items-start justify-between gap-2">
         <div>
-          <h3 className="text-[13px] font-medium text-muted-foreground">{item.label}</h3>
+          <h2 className="text-[13px] font-medium text-muted-foreground">{item.label}</h2>
           <div className="text-[11px] text-muted-foreground/80">{item.scope}</div>
         </div>
         <StatusBadge status={c.status} />

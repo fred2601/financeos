@@ -135,9 +135,9 @@ function AnalysisView({ data }: { data: AnalystResponse }) {
   return (
     <div className="flex flex-col gap-5">
       <div>
-        <h2 className="text-lg font-semibold tracking-tight">
+        <h3 className="text-lg font-semibold tracking-tight">
           <Statement s={a.headline} />
-        </h2>
+        </h3>
         <p className="mt-2 text-sm leading-relaxed">
           <Statement s={a.summary} />
         </p>
@@ -268,7 +268,7 @@ function FactTable({ facts }: { facts: Fact[] }) {
                   </Badge>
                 )}
               </TableCell>
-              <TableCell className="num text-right text-xs whitespace-nowrap">{f.value}</TableCell>
+              <TableCell className="num text-right text-xs whitespace-normal sm:whitespace-nowrap">{f.value}</TableCell>
             </TableRow>
           ))}
         </TableBody>

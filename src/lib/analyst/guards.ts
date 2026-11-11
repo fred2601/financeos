@@ -1,7 +1,7 @@
 /**
- * Small in-memory guards for the public demo: a per-client rate limit and a result cache.
- * Both are per server instance (best effort on serverless) — they reduce cost, they are not
- * a security boundary. Set a spend limit on the Anthropic API key as the real safeguard.
+ * In-memory per-client rate limit for the public demo. It is per server instance (best effort
+ * on serverless) — it reduces cost, it is not a security boundary. Results are cached in the
+ * shared platform cache (see generate.ts); a spend limit on the API key is the real safeguard.
  */
 
 export class RateLimiter {
@@ -21,23 +21,5 @@ export class RateLimiter {
     recent.push(now);
     this.hits.set(key, recent);
     return true;
-  }
-}
-
-export class TtlCache<T> {
-  private store = new Map<string, { value: T; expires: number }>();
-  constructor(private readonly ttlMs: number) {}
-
-  get(key: string, now: number): T | undefined {
-    const hit = this.store.get(key);
-    if (!hit || hit.expires <= now) {
-      this.store.delete(key);
-      return undefined;
-    }
-    return hit.value;
-  }
-
-  set(key: string, value: T, now: number): void {
-    this.store.set(key, { value, expires: now + this.ttlMs });
   }
 }

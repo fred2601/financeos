@@ -16,15 +16,14 @@ interface NavItem {
   href: string;
   label: string;
   icon: LucideIcon;
-  available: boolean;
 }
 
 const NAV: NavItem[] = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, available: true },
-  { href: "/variance", label: "Budget vs actual", icon: ArrowLeftRight, available: true },
-  { href: "/forecast", label: "Forecast", icon: ChartNoAxesCombined, available: true },
-  { href: "/scenarios", label: "Scenarios", icon: Layers, available: true },
-  { href: "/analyst", label: "AI analyst", icon: Sparkles, available: true },
+  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/variance", label: "Budget vs actual", icon: ArrowLeftRight },
+  { href: "/forecast", label: "Forecast", icon: ChartNoAxesCombined },
+  { href: "/scenarios", label: "Scenarios", icon: Layers },
+  { href: "/analyst", label: "AI analyst", icon: Sparkles },
 ];
 
 function Logo() {
@@ -48,34 +47,23 @@ function NavLinks({ compact = false }: { compact?: boolean }) {
   const pathname = usePathname();
   return (
     <nav className={cn(compact ? "flex gap-1" : "flex flex-col gap-0.5")} aria-label="Main">
-      {NAV.map(({ href, label, icon: Icon, available }) => {
+      {NAV.map(({ href, label, icon: Icon }) => {
         const active = pathname.startsWith(href);
-        const classes = cn(
-          "flex items-center gap-2.5 rounded-md px-2.5 py-2 text-sm whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-primary",
-          active
-            ? "bg-sidebar-accent font-medium text-sidebar-accent-foreground"
-            : "text-sidebar-foreground/80 hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground",
-          !available && "pointer-events-none opacity-50",
-        );
-        const content = (
-          <>
+        return (
+          <Link
+            key={href}
+            href={href}
+            aria-current={active ? "page" : undefined}
+            className={cn(
+              "flex items-center gap-2.5 rounded-md px-2.5 py-2 text-sm whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-primary",
+              active
+                ? "bg-sidebar-accent font-medium text-sidebar-accent-foreground"
+                : "text-sidebar-foreground/80 hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground",
+            )}
+          >
             <Icon className="size-4 shrink-0" aria-hidden />
             <span>{label}</span>
-            {!available && !compact && (
-              <span className="ml-auto rounded bg-sidebar-border px-1.5 py-px text-[10px] uppercase tracking-wide text-sidebar-muted">
-                Soon
-              </span>
-            )}
-          </>
-        );
-        return available ? (
-          <Link key={href} href={href} className={classes} aria-current={active ? "page" : undefined}>
-            {content}
           </Link>
-        ) : (
-          <span key={href} className={classes} aria-disabled="true" title="Coming in a later milestone">
-            {content}
-          </span>
         );
       })}
     </nav>
