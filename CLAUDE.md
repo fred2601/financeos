@@ -26,6 +26,10 @@ data schema and formulas and `docs/ROADMAP.md` for the current milestone.
 - Charts in `src/components/charts/` receive ready-to-plot arrays; no math inside.
 - Server Components by default; add `"use client"` only for interactivity (charts, inputs).
 - Filters (period, department, category) live in URL search params.
+- Next.js 16 with Cache Components: a page that reads `searchParams` must await it inside a
+  child component wrapped in `<Suspense>` (see `src/app/dashboard/page.tsx`). Check the bundled
+  docs in `node_modules/next/dist/docs/` before using unfamiliar Next APIs (see AGENTS.md).
+- Do not export non-component values from `"use client"` files for use in Server Components.
 
 ## Financial rules (non-negotiable)
 - Revenue = units × average selling price. Gross profit = revenue − COGS.

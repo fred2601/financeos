@@ -7,7 +7,7 @@ built on a fictional Danish retailer, **Fjordhus Retail A/S**.
 > ⚠️ **All company data in this project is fictional.** It was generated for demonstration
 > purposes and does not represent any real company.
 
-> Status: in development. Milestone 1 (foundation + executive dashboard) is in planning.
+> Status: in development. **Milestone 1 (executive dashboard) is complete**; Milestone 2 (budget vs actual) is next.
 > See [`docs/ROADMAP.md`](docs/ROADMAP.md).
 
 ## Features (planned)
@@ -22,12 +22,12 @@ built on a fictional Danish retailer, **Fjordhus Retail A/S**.
 
 ## Tech stack
 
-Next.js (App Router) · TypeScript (strict) · Tailwind CSS · shadcn/ui · Recharts · Zod · Vitest · Vercel
+Next.js 16 (App Router) · React 19 · TypeScript (strict) · Tailwind CSS · shadcn/ui · Recharts · Zod · Vitest · Vercel
 
 ## Getting started
 
 ### Prerequisites
-- [Node.js](https://nodejs.org/) 20 LTS or newer (`node -v`)
+- [Node.js](https://nodejs.org/) 22 LTS or newer (`node -v`)
 - Git
 
 ### Install and run
@@ -60,6 +60,7 @@ Open http://localhost:3000.
 | `npm run lint` | Lint |
 | `npm run build` | Production build |
 | `npm run seed` | Regenerate the fictional dataset (deterministic) |
+| `npm run check` | Typecheck + lint + tests in one go |
 
 ### Environment variables
 

@@ -1,6 +1,6 @@
 # FinanceOS — Architecture, Data Schema & Formulas
 
-> Status: **proposal, awaiting approval** (2026-11-11). Nothing is implemented yet.
+> Status: approved 2026-11-11. Milestone 1 implemented.
 > All company data in FinanceOS is **fictional** unless a user imports their own.
 
 ---
@@ -254,3 +254,5 @@ AI analyst (M6), explanations must be labelled as **facts** (validated numbers),
 - Single company, single currency (DKK), calendar fiscal year.
 - No user accounts or persistence (by design, until needed).
 - Seed data is synthetic and simplified (no VAT, inventory, balance sheet or cash flow).
+- Rent is treated as operating expense (pre-IFRS 16 management view), so EBITDA is lower than an IFRS 16 EBITDA would be.
+- No materiality threshold yet: any non-zero variance is favorable/unfavorable, even if it rounds to 0,0 on screen (planned for M2).
