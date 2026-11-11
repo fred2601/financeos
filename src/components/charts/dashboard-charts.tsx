@@ -29,6 +29,7 @@ const pctTick = (v: number) => formatPercent(v, { digits: 0 });
 /** Monthly revenue: actual bars vs budget line. Selected period(s) highlighted. */
 export function RevenueTrendChart({ data }: { data: TrendPoint[] }) {
   return (
+    <div role="img" aria-label={"Bar chart: monthly revenue, actual versus budget. Exact figures are in the tables on this page."}>
     <ResponsiveContainer width="100%" height={HEIGHT} initialDimension={{ width: 600, height: HEIGHT }}>
       <ComposedChart data={data} margin={{ top: 8, right: 4, bottom: 0, left: 0 }}>
         <CartesianGrid vertical={false} stroke="var(--border)" />
@@ -68,12 +69,14 @@ export function RevenueTrendChart({ data }: { data: TrendPoint[] }) {
         />
       </ComposedChart>
     </ResponsiveContainer>
+    </div>
   );
 }
 
 /** Monthly EBITDA: actual vs budget bars, negative months below the zero line. */
 export function EbitdaChart({ data }: { data: TrendPoint[] }) {
   return (
+    <div role="img" aria-label={"Bar chart: monthly EBITDA, actual versus budget. Exact figures are in the P&L summary."}>
     <ResponsiveContainer width="100%" height={HEIGHT} initialDimension={{ width: 600, height: HEIGHT }}>
       <ComposedChart data={data} margin={{ top: 8, right: 4, bottom: 0, left: 0 }} barGap={1}>
         <CartesianGrid vertical={false} stroke="var(--border)" />
@@ -105,12 +108,14 @@ export function EbitdaChart({ data }: { data: TrendPoint[] }) {
         </Bar>
       </ComposedChart>
     </ResponsiveContainer>
+    </div>
   );
 }
 
 /** Gross margin and EBITDA margin, actual (solid) vs budget (dashed). */
 export function MarginTrendChart({ data }: { data: TrendPoint[] }) {
   return (
+    <div role="img" aria-label={"Line chart: gross margin and EBITDA margin by month, actual versus budget."}>
     <ResponsiveContainer width="100%" height={HEIGHT} initialDimension={{ width: 600, height: HEIGHT }}>
       <LineChart data={data} margin={{ top: 8, right: 4, bottom: 0, left: 0 }}>
         <CartesianGrid vertical={false} stroke="var(--border)" />
@@ -141,6 +146,7 @@ export function MarginTrendChart({ data }: { data: TrendPoint[] }) {
         <Line dataKey="ebitdaMarginBudget" stroke={SECONDARY} strokeOpacity={0.5} strokeWidth={1.5} strokeDasharray="4 4" dot={false} isAnimationActive={false} />
       </LineChart>
     </ResponsiveContainer>
+    </div>
   );
 }
 

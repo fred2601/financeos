@@ -30,9 +30,12 @@ const NAV: NavItem[] = [
 function Logo() {
   return (
     <div className="flex items-center gap-2.5">
-      <div className="grid size-8 place-items-center rounded-lg bg-sidebar-primary text-sm font-bold text-sidebar-primary-foreground">
-        F
-      </div>
+      <svg viewBox="0 0 64 64" className="size-8 shrink-0" aria-hidden="true">
+        <rect width="64" height="64" rx="14" fill="var(--sidebar-accent)" />
+        <rect x="14" y="36" width="8" height="14" rx="2" fill="var(--sidebar-primary)" />
+        <rect x="28" y="26" width="8" height="24" rx="2" fill="var(--sidebar-primary)" />
+        <rect x="42" y="16" width="8" height="34" rx="2" fill="#ffffff" />
+      </svg>
       <div className="leading-tight">
         <div className="text-[15px] font-semibold tracking-tight text-sidebar-accent-foreground">FinanceOS</div>
         <div className="text-[11px] text-sidebar-muted">Financial planning & analysis</div>
@@ -48,7 +51,7 @@ function NavLinks({ compact = false }: { compact?: boolean }) {
       {NAV.map(({ href, label, icon: Icon, available }) => {
         const active = pathname.startsWith(href);
         const classes = cn(
-          "flex items-center gap-2.5 rounded-md px-2.5 py-2 text-sm whitespace-nowrap transition-colors",
+          "flex items-center gap-2.5 rounded-md px-2.5 py-2 text-sm whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-primary",
           active
             ? "bg-sidebar-accent font-medium text-sidebar-accent-foreground"
             : "text-sidebar-foreground/80 hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground",

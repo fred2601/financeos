@@ -33,6 +33,7 @@ type Bars = ScenarioViewModel["ebitdaBars"];
 /** Full-year EBITDA: base year actual vs the three scenarios. */
 export function ScenarioEbitdaChart({ data }: { data: Bars }) {
   return (
+    <div role="img" aria-label={"Bar chart: full-year EBITDA for the base year and each scenario. Figures are in the scenario comparison table."}>
     <ResponsiveContainer width="100%" height={260} initialDimension={{ width: 500, height: 260 }}>
       <BarChart data={data} margin={{ top: 20, right: 8, bottom: 0, left: 0 }}>
         <CartesianGrid vertical={false} stroke="var(--border)" />
@@ -60,6 +61,7 @@ export function ScenarioEbitdaChart({ data }: { data: Bars }) {
         </Bar>
       </BarChart>
     </ResponsiveContainer>
+    </div>
   );
 }
 
@@ -73,6 +75,7 @@ const SERIES: { key: keyof Omit<MonthlyEbitdaPoint, "month">; label: string }[] 
 /** Monthly EBITDA per scenario; seasonality follows the base year. */
 export function ScenarioMonthlyChart({ data, baseLabel }: { data: MonthlyEbitdaPoint[]; baseLabel: string }) {
   return (
+    <div role="img" aria-label={"Line chart: monthly EBITDA for the base year and each scenario."}>
     <ResponsiveContainer width="100%" height={260} initialDimension={{ width: 600, height: 260 }}>
       <LineChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: 0 }}>
         <CartesianGrid vertical={false} stroke="var(--border)" />
@@ -109,5 +112,6 @@ export function ScenarioMonthlyChart({ data, baseLabel }: { data: MonthlyEbitdaP
         ))}
       </LineChart>
     </ResponsiveContainer>
+    </div>
   );
 }

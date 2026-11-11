@@ -50,7 +50,7 @@ export function PercentInput({
         <button
           type="button"
           onClick={() => nudge(-1)}
-          className="grid size-7 place-items-center text-muted-foreground hover:text-foreground"
+          className="grid size-7 place-items-center rounded text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           aria-label={`Decrease ${label}`}
         >
           <Minus className="size-3.5" />
@@ -72,7 +72,7 @@ export function PercentInput({
         <button
           type="button"
           onClick={() => nudge(1)}
-          className="grid size-7 place-items-center text-muted-foreground hover:text-foreground"
+          className="grid size-7 place-items-center rounded text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           aria-label={`Increase ${label}`}
         >
           <Plus className="size-3.5" />

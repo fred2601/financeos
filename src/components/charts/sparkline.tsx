@@ -6,6 +6,7 @@ import type { Maybe } from "@/lib/finance/safe-math";
 /** Tiny trend line for KPI cards. Purely visual: values come pre-computed. */
 export function Sparkline({ data }: { data: { period: string; value: Maybe }[] }) {
   return (
+    <div aria-hidden="true" className="h-full">
     <ResponsiveContainer width="100%" height="100%" initialDimension={{ width: 200, height: 40 }}>
       <LineChart data={data} margin={{ top: 2, right: 2, bottom: 2, left: 2 }}>
         <YAxis hide domain={["dataMin", "dataMax"]} />
@@ -20,5 +21,6 @@ export function Sparkline({ data }: { data: { period: string; value: Maybe }[] }
         />
       </LineChart>
     </ResponsiveContainer>
+    </div>
   );
 }

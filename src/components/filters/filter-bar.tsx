@@ -45,7 +45,7 @@ export function FilterBar({ state, periods, categories, departments }: FilterBar
             onClick={() => navigate({ view: v })}
             aria-pressed={state.view === v}
             className={cn(
-              "rounded-md px-3 py-1 text-sm font-medium transition-colors",
+              "rounded-md px-3 py-1 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
               state.view === v ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground",
             )}
           >

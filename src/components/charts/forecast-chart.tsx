@@ -25,6 +25,7 @@ export function ForecastChart({
   const baseKey = metric === "revenue" ? "revenueBase" : "ebitdaBase";
   const fcKey = metric === "revenue" ? "revenueForecast" : "ebitdaForecast";
   return (
+    <div role="img" aria-label={`Bar chart: monthly ${metric === "revenue" ? "revenue" : "EBITDA"}, ${baseLabel} versus ${forecastLabel}. Monthly figures are in the monthly forecast table.`}>
     <ResponsiveContainer width="100%" height={240} initialDimension={{ width: 600, height: 240 }}>
       <BarChart data={data} margin={{ top: 8, right: 4, bottom: 0, left: 0 }} barGap={1}>
         <CartesianGrid vertical={false} stroke="var(--border)" />
@@ -52,5 +53,6 @@ export function ForecastChart({
         <Bar dataKey={fcKey} fill={FORECAST} radius={[2, 2, 0, 0]} maxBarSize={14} isAnimationActive={false} />
       </BarChart>
     </ResponsiveContainer>
+    </div>
   );
 }

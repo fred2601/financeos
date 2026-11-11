@@ -59,12 +59,14 @@ export function ForecastWorkspace({ base, initial }: { base: ForecastBase; initi
     <div className="grid grid-cols-1 gap-6 xl:grid-cols-[320px_1fr]">
       {/* Assumptions */}
       <aside className="flex flex-col gap-4 xl:sticky xl:top-6 xl:self-start">
-        <Card>
+        <Card className="overflow-visible">
           <CardHeader>
             <CardTitle>Assumptions</CardTitle>
             <CardDescription>Change vs {vm.baseLabel}. Results update instantly.</CardDescription>
           </CardHeader>
-          <CardContent className="flex flex-col gap-5">
+          {/* On smaller screens the results sit below the inputs; keep the outcome in view while editing. */}
+          <LiveSummary vm={vm} />
+          <CardContent className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-1">
             {CATEGORY_IDS.map((c) => (
               <fieldset key={c} className="flex flex-col gap-2">
                 <legend className="mb-1 text-[13px] font-semibold">{CATEGORY_LABELS[c]}</legend>
@@ -90,7 +92,7 @@ export function ForecastWorkspace({ base, initial }: { base: ForecastBase; initi
                 />
               </fieldset>
             ))}
-            <fieldset className="flex flex-col gap-2 border-t pt-4">
+            <fieldset className="grid grid-cols-1 gap-x-6 gap-y-2 border-t pt-4 md:col-span-2 md:grid-cols-2 xl:col-span-1 xl:grid-cols-1">
               <legend className="mb-1 text-[13px] font-semibold">Operating cost growth</legend>
               {OPEX_ACCOUNT_IDS.map((id) => (
                 <PercentInput
@@ -102,7 +104,7 @@ export function ForecastWorkspace({ base, initial }: { base: ForecastBase; initi
                 />
               ))}
             </fieldset>
-            <div className="flex flex-wrap gap-2 border-t pt-4">
+            <div className="flex flex-wrap gap-2 border-t pt-4 md:col-span-2 xl:col-span-1">
               <Button
                 variant="outline"
                 size="sm"
@@ -211,6 +213,26 @@ export function ForecastWorkspace({ base, initial }: { base: ForecastBase; initi
           </Card>
         </div>
       </div>
+    </div>
+  );
+}
+
+function LiveSummary({ vm }: { vm: ReturnType<typeof buildForecastView> }) {
+  const kpi = (k: string) => vm.kpis.find((x) => x.key === k)?.comparison;
+  const revenue = kpi("revenue");
+  const ebitda = kpi("ebitda");
+  return (
+    <div
+      aria-live="polite"
+      className="sticky top-0 z-10 mx-4 flex flex-wrap items-center justify-between gap-x-4 gap-y-1 rounded-lg border bg-card/95 px-3 py-2 text-sm shadow-sm backdrop-blur xl:hidden"
+    >
+      <span className="text-muted-foreground">
+        Revenue <span className="num font-semibold text-foreground">{formatDkk(revenue?.actual ?? null)}</span>
+      </span>
+      <span className="flex items-center gap-2 text-muted-foreground">
+        EBITDA <span className="num font-semibold text-foreground">{formatDkk(ebitda?.actual ?? null)}</span>
+        {ebitda && <VarianceIndicator comparison={ebitda} kind="amount" />}
+      </span>
     </div>
   );
 }
