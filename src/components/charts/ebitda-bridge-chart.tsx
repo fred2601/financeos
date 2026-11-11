@@ -21,7 +21,7 @@ export function EbitdaBridgeChart({ data }: { data: BridgeStep[] }) {
   return (
     <div role="img" aria-label={"Waterfall chart: EBITDA bridge from budget to actual. The same effects are listed in the variance tables."}>
     <ResponsiveContainer width="100%" height={320} initialDimension={{ width: 800, height: 320 }}>
-      <BarChart data={data} margin={{ top: 20, right: 8, bottom: 0, left: 0 }}>
+      <BarChart data={data} margin={{ top: 20, right: 8, bottom: 0, left: 12 }}>
         <CartesianGrid vertical={false} stroke="var(--border)" />
         <XAxis
           dataKey="label"
@@ -29,7 +29,7 @@ export function EbitdaBridgeChart({ data }: { data: BridgeStep[] }) {
           tickLine={false}
           axisLine={false}
           interval={0}
-          height={48}
+          height={64}
           angle={-30}
           textAnchor="end"
         />

@@ -1,6 +1,6 @@
 # FinanceOS — Architecture, Data Schema & Formulas
 
-> Status: approved 2026-11-11. Milestones 1–4 and 6 implemented (5, import, deferred).
+> Status: approved 2026-11-11. Milestones 1–4, 6 and 7 implemented (5, import, deferred).
 > All company data in FinanceOS is **fictional** unless a user imports their own.
 
 ---

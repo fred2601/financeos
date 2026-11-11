@@ -120,7 +120,7 @@ export function MarginTrendChart({ data }: { data: TrendPoint[] }) {
       <LineChart data={data} margin={{ top: 8, right: 4, bottom: 0, left: 0 }}>
         <CartesianGrid vertical={false} stroke="var(--border)" />
         <XAxis dataKey="label" tick={axisTick} tickLine={false} axisLine={false} interval="preserveStartEnd" minTickGap={18} />
-        <YAxis tick={axisTick} tickLine={false} axisLine={false} tickFormatter={pctTick} width={44} />
+        <YAxis tick={axisTick} tickLine={false} axisLine={false} tickFormatter={pctTick} width={52} />
         <ReferenceLine y={0} stroke="var(--muted-foreground)" strokeOpacity={0.5} />
         <Tooltip
           content={({ payload }) => {

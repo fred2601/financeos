@@ -11,7 +11,7 @@ Rule: the app runs, tests pass and a Git commit is made at the end of every mile
 | **M4** ✅ | Scenario analysis (base/best/worst, sliders, comparison) | 4–6 h | 3 |
 | M5 | CSV/Excel import with validation (deferred) | 3–5 h | 3–4 |
 | **M6** ✅ | AI financial analyst (optional) | 3–4 h | 4 |
-| M7 | Polish, responsive QA, docs, demo script, final deploy | 2–3 h | 4 |
+| **M7** ✅ | Polish, responsive QA, docs, demo script, final deploy | 2–3 h | 4 |
 
 Priority if time runs short: M1 → M2 → M3 → M4 are the **MVP**. M5 and M6 are stretch goals.
 
@@ -113,5 +113,8 @@ month of the fictional company, every number comes from tested functions, `npm t
 - [x] Result cache and per-client rate limit; tests for fact sheet, validator, guards and route (mocked model)
 - [x] `ANTHROPIC_API_KEY` set in Vercel; live analysis verified 2026-11-11 (figures match the app, 0 statements rejected)
 
-### M7 — Polish
-- [ ] Responsive QA, accessibility pass, demo walkthrough script for interviews, screenshots in README
+### M7 — Polish ✅
+- [x] Responsive QA at phone, tablet and desktop; forecast inputs in two columns on tablet with a sticky live summary
+- [x] Accessibility pass: skip link, focus rings on custom controls, text alternatives for charts, status in text and colour
+- [x] App icon, 404 page, metadata; chart label fixes
+- [x] README rewritten with screenshots (`docs/screenshots/`); demo script for interviews (`docs/DEMO.md`)
