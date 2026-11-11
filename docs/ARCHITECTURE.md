@@ -280,7 +280,9 @@ same month of the base year, so seasonality is preserved:
 | EBITDA | revenue_F − COGS_F − opex_F |
 
 Because drivers apply evenly to all months, the same formulas hold for full-year totals
-(tested), which is what the "Show formulas" view displays. Assumptions are clamped
+(tested), which is what the "Show formulas" view displays. Zero base revenue keeps
+COGS scaled with volume; base revenue without units (no ASP) gives `null`. QA report:
+`docs/qa/m3-forecast-qa.md`. Assumptions are clamped
 (growth/price −50 % to +100 %, margin ±20 pp) and stored in the URL, e.g.
 `/forecast?units=2,2,3&price=2,2,2&margin=0,0,0&opex=3.5,2,3,3,5,2`.
 
@@ -313,5 +315,5 @@ AI analyst (M6), explanations must be labelled as **facts** (validated numbers),
 - Seed data is synthetic and simplified (no VAT, inventory, balance sheet or cash flow).
 - Rent is treated as operating expense (pre-IFRS 16 management view), so EBITDA is lower than an IFRS 16 EBITDA would be.
 - Materiality thresholds are fixed company-wide (not per account or per period length).
-- Forecast drivers apply evenly to all months and the base year is used as reported (one-offs are not normalised automatically).
+- Forecast drivers apply evenly to all months and the base year is used as reported (one-offs are not normalised automatically). No calendar effects; forecast units are fractional (shown rounded).
 - Mix is measured on units across categories with very different prices; a value-based mix would give different (equally valid) splits.

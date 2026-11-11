@@ -175,6 +175,12 @@ export function ForecastWorkspace({ base, initial }: { base: ForecastBase; initi
           </CardHeader>
           <CardContent>
             <CategoryForecastTable rows={vm.categories} showFormulas={showFormulas} />
+            {showFormulas && (
+              <p className="mt-3 text-xs text-muted-foreground">
+                Numbers in the formulas are rounded for display. Calculations use unrounded values, so recomputing from
+                the displayed figures can differ slightly (a few thousand kroner on full-year revenue).
+              </p>
+            )}
           </CardContent>
         </Card>
 

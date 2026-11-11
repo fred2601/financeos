@@ -95,11 +95,21 @@ export function forecastCategoryMonth(
   const { units, revenue, cogs } = base;
   if (units === null || revenue === null || cogs === null) return { units: null, revenue: null, cogs: null };
   const unitsF = units * (1 + a.unitGrowth);
+
+  // Zero base revenue: no price and no margin to apply. Revenue stays 0 and any costs
+  // are kept, scaled with volume (cost per unit unchanged), rather than dropped to 0.
+  if (revenue === 0) return { units: unitsF, revenue: 0, cogs: cogs * (1 + a.unitGrowth) };
+
+  // Revenue without units means there is no average selling price, so
+  // "revenue = units × ASP" cannot be applied. Report n/a instead of inventing a number.
+  const aspBase = safeDivide(revenue, units);
+  if (aspBase === null) return { units: null, revenue: null, cogs: null };
+
   // Revenue = units × ASP, with ASP_F = ASP_base × (1 + price change).
-  // Written as revenue_base × growth factors so it also works when base units are 0.
-  const revenueF = revenue * (1 + a.unitGrowth) * (1 + a.priceChange);
-  // With zero base revenue the forecast revenue is also zero, so the margin has no effect.
-  const baseMargin = safeDivide(revenue - cogs, revenue) ?? 0;
+  const revenueF = unitsF * aspBase * (1 + a.priceChange);
+  // Margin change is in percentage points: GM%_F = GM%_base + change (not × (1 + change)).
+  const baseMargin = safeDivide(revenue - cogs, revenue);
+  if (baseMargin === null) return { units: null, revenue: null, cogs: null };
   const marginF = baseMargin + a.marginChange;
   return { units: unitsF, revenue: revenueF, cogs: revenueF * (1 - marginF) };
 }
