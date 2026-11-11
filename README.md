@@ -7,6 +7,8 @@ built on a fictional Danish retailer, **Fjordhus Retail A/S**.
 > ⚠️ **All company data in this project is fictional.** It was generated for demonstration
 > purposes and does not represent any real company.
 
+> **Live demo:** https://financeos-kappa-nine.vercel.app
+
 > Status: in development. **Milestone 1 (executive dashboard) is complete**; Milestone 2 (budget vs actual) is next.
 > See [`docs/ROADMAP.md`](docs/ROADMAP.md).
 

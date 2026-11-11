@@ -68,7 +68,7 @@ month of the fictional company, every number comes from tested functions, `npm t
 
 ### 1E. Verify & ship (~1 h) — commit `chore: milestone 1`
 - [x] All checks pass; manual check of 2–3 KPIs against a hand calculation
-- [ ] Push to GitHub, deploy to Vercel
+- [x] Push to GitHub, deploy to Vercel (https://financeos-kappa-nine.vercel.app, auto-deploys on push to `main`)
 - [x] Update README status and this checklist
 
 **Not in M1:** department filters, variance drill-down, forecasting, scenarios, imports, AI.
