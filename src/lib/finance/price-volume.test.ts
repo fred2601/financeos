@@ -93,6 +93,11 @@ describe("materiality", () => {
     expect(isMaterialAmount(200_000, null)).toBe(true); // no budget to compare % with
     expect(isMaterialAmount(null, null)).toBe(false);
   });
+  it("treats variances of 1 mio. kr. or more as material even below 1 %", () => {
+    expect(isMaterialAmount(2_550_000, -0.006)).toBe(true); // FY2024 revenue miss
+    expect(isMaterialAmount(-1_000_000, 0.001)).toBe(true);
+    expect(isMaterialAmount(999_999, 0.005)).toBe(false);
+  });
   it("uses a percentage-point threshold for ratios", () => {
     expect(isMaterialRatio(0.002)).toBe(true);
     expect(isMaterialRatio(-0.0004)).toBe(false);
@@ -105,6 +110,6 @@ describe("materiality", () => {
     expect(compare(100.5, 100, "higher-is-better", "driver").status).toBe("neutral");
   });
   it("exposes the default thresholds", () => {
-    expect(DEFAULT_MATERIALITY).toEqual({ percent: 0.01, absoluteDkk: 50_000, ratio: 0.001 });
+    expect(DEFAULT_MATERIALITY).toEqual({ percent: 0.01, absoluteDkk: 50_000, alwaysMaterialDkk: 1_000_000, ratio: 0.001 });
   });
 });

@@ -137,7 +137,8 @@ async function VarianceContent({ searchParams }: Pick<PageProps<"/variance">, "s
           <strong className="font-medium text-foreground">How to read this.</strong> Variance % = (actual − budget) ÷
           |budget|. Favorable/unfavorable depends on the line: revenue above budget is favorable, costs above budget are
           unfavorable. Variances smaller than {formatPercent(m.percent, { digits: 0 })} or{" "}
-          {formatDkk(m.absoluteDkk)} (margins: {formatPp(m.ratio)}) are treated as on budget. The EBITDA bridge values
+          {formatDkk(m.absoluteDkk)} (margins: {formatPp(m.ratio)}) are shown as within threshold, unless they reach{" "}
+          {formatDkk(m.alwaysMaterialDkk)}, which is always material. The EBITDA bridge values
           price changes at 100 % flow-through and volume at budget gross profit per unit. Figures describe what changed,
           not why. All data is fictional.
         </p>

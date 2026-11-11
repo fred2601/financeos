@@ -2,6 +2,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { AnalystOutput } from "@/lib/analyst/output";
 
 // Mock the Anthropic client; keep the real error classes for the error-mapping checks.
+// next/cache's cacheLife needs the Next runtime; in tests the cache directive is a no-op.
+vi.mock("next/cache", () => ({ cacheLife: () => {} }));
 const parse = vi.fn();
 vi.mock("@anthropic-ai/sdk", async () => {
   const actual = await vi.importActual<typeof import("@anthropic-ai/sdk")>("@anthropic-ai/sdk");
@@ -9,7 +11,7 @@ vi.mock("@anthropic-ai/sdk", async () => {
     function MockAnthropic() {
       return { beta: { messages: { parse } } };
     },
-    { AuthenticationError: actual.default.AuthenticationError, RateLimitError: actual.default.RateLimitError, APIError: actual.default.APIError },
+    { AuthenticationError: actual.default.AuthenticationError, RateLimitError: actual.default.RateLimitError, APIError: actual.default.APIError, APIConnectionTimeoutError: actual.default.APIConnectionTimeoutError },
   );
   return { ...actual, default: Mock };
 });
@@ -79,15 +81,50 @@ describe("POST /api/analyst", () => {
     expect(chip.fact.value).toMatch(/6,7 mio\. kr\./);
   });
 
-  it("serves repeat requests for the same period from cache", async () => {
+  it("marks a freshly generated result as not cached", async () => {
+    parse.mockResolvedValue({ stop_reason: "end_turn", parsed_output: output, model: "claude-opus-5-5" });
+    const json = await (await post({ period: "2025-06", view: "month" })).json();
+    expect(json.cached).toBe(false);
+    expect(Date.parse(json.generatedAt)).not.toBeNaN();
+  });
+
+  it("rejects non-JSON content types (cross-site simple requests) with 415", async () => {
+    const { POST } = await import("./route");
+    const res = await POST(
+      new Request("http://localhost/api/analyst", {
+        method: "POST",
+        headers: { "Content-Type": "text/plain" },
+        body: JSON.stringify({ period: "2025-11", view: "ytd" }),
+      }),
+    );
+    expect(res.status).toBe(415);
+    expect(parse).not.toHaveBeenCalled();
+  });
+
+  it("rejects requests from another origin with 403", async () => {
+    const { POST } = await import("./route");
+    const res = await POST(
+      new Request("http://localhost/api/analyst", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Origin: "https://evil.example" },
+        body: JSON.stringify({ period: "2025-11", view: "ytd" }),
+      }),
+    );
+    expect(res.status).toBe(403);
+    expect(parse).not.toHaveBeenCalled();
+  });
+
+  it("accepts same-origin requests", async () => {
     parse.mockResolvedValue({ stop_reason: "end_turn", parsed_output: output, model: "claude-opus-5-5" });
     const { POST } = await import("./route");
-    const req = () =>
-      POST(new Request("http://localhost/api/analyst", { method: "POST", body: JSON.stringify({ period: "2025-06", view: "month" }) }));
-    await req();
-    const second = await (await req()).json();
-    expect(parse).toHaveBeenCalledTimes(1);
-    expect(second.cached).toBe(true);
+    const res = await POST(
+      new Request("http://localhost/api/analyst", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Origin: "http://localhost" },
+        body: JSON.stringify({ period: "2025-11", view: "ytd" }),
+      }),
+    );
+    expect(res.status).toBe(200);
   });
 
   it("rate-limits fresh analyses per client", async () => {
@@ -98,7 +135,7 @@ describe("POST /api/analyst", () => {
       const res = await POST(
         new Request("http://localhost/api/analyst", {
           method: "POST",
-          headers: { "x-forwarded-for": "9.9.9.9" },
+          headers: { "Content-Type": "application/json", "x-forwarded-for": "9.9.9.9" },
           body: JSON.stringify({ period, view: "month" }),
         }),
       );
@@ -121,5 +158,11 @@ describe("POST /api/analyst", () => {
     const res = await post({ period: "2025-04", view: "month" });
     expect(res.status).toBe(502);
     expect((await res.json()).error).toBe("Could not reach the AI service.");
+  });
+
+  it("maps an SDK timeout to 504", async () => {
+    const { default: Anthropic } = await import("@anthropic-ai/sdk");
+    parse.mockRejectedValueOnce(new Anthropic.APIConnectionTimeoutError());
+    expect((await post({ period: "2025-05", view: "month" })).status).toBe(504);
   });
 });

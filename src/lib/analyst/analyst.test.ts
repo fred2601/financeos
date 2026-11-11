@@ -26,8 +26,8 @@ describe("fact sheet", () => {
     expect(find("Revenue variance from selling price")?.status).toBe("unfavorable");
   });
 
-  it("carries the app's favorability, including 'on budget' for immaterial variances", () => {
-    expect(find("Operating expenses — variance vs budget")?.status).toBe("on budget"); // +0,3 %
+  it("carries the app's favorability, including 'within threshold' for immaterial variances", () => {
+    expect(find("Operating expenses — variance vs budget")?.status).toBe("within threshold"); // +0,3 %, 0,6 mio. kr.
   });
 
   it("marks prior-period comparisons as not applicable when there is no prior period", () => {

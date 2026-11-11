@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils";
 const STATUS_CLASS: Record<FactStatus, string> = {
   favorable: "bg-favorable-soft text-favorable",
   unfavorable: "bg-unfavorable-soft text-unfavorable",
-  "on budget": "bg-muted text-muted-foreground",
+  "within threshold": "bg-muted text-muted-foreground",
   "not applicable": "bg-muted text-muted-foreground",
 };
 
@@ -39,9 +39,20 @@ export function AnalystWorkspace({ sheet }: { sheet: FactSheet }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ period: sheet.period, view: sheet.view }),
       });
-      const json: unknown = await res.json();
-      if (!res.ok) {
-        const message = typeof json === "object" && json !== null && "error" in json ? String(json.error) : "Request failed.";
+      // The platform can answer with a non-JSON page (e.g. a timeout), so parse defensively.
+      const text = await res.text();
+      let json: unknown = null;
+      try {
+        json = JSON.parse(text);
+      } catch {
+        json = null;
+      }
+      const isResult = typeof json === "object" && json !== null && "analysis" in json && "sheet" in json;
+      if (!res.ok || !isResult) {
+        const serverMessage = typeof json === "object" && json !== null && "error" in json ? String(json.error) : null;
+        const message =
+          serverMessage ??
+          (res.status === 504 ? "The analysis took too long. Please try again." : `The analysis could not be generated (HTTP ${res.status}).`);
         setState({ kind: "error", message });
         return;
       }

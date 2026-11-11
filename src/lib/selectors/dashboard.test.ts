@@ -52,6 +52,13 @@ describe("dashboard view-model", () => {
     expect(parts).toBe(total?.revenue.actual);
   });
 
+  it("labels the FY2024 revenue miss (−2,5 mio. kr., −0,6 %) unfavorable, not within threshold", () => {
+    const vm = buildDashboard(dataset, { period: "2024-12", view: "ytd" });
+    const rev = vm.kpis.find((k) => k.key === "revenue")?.vsBudget;
+    expect(rev?.percent ?? 0).toBeGreaterThan(-0.01);
+    expect(rev?.status).toBe("unfavorable");
+  });
+
   it("flags the planted marketing overspend in Nov 2025 as unfavorable opex", () => {
     const vm = buildDashboard(dataset, { period: "2025-11", view: "month" });
     const opex = vm.pnl.find((r) => r.key === "opex");

@@ -35,7 +35,7 @@ export interface Comparison {
   percent: Maybe;
   /** Whether the variance passes the materiality thresholds. */
   material: boolean;
-  /** favorable/unfavorable only when material; otherwise "neutral" (on budget). */
+  /** favorable/unfavorable only when material; otherwise "neutral" (within threshold). */
   status: Favorability;
 }
 

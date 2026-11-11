@@ -12,7 +12,7 @@ const tone = (s: Favorability) => (s === "favorable" ? "text-favorable" : s === 
 const t = (v: Maybe, signed = false) => formatDkk(v, { scale: "t", signed });
 
 export function StatusBadge({ status }: { status: Favorability }) {
-  const label = status === "favorable" ? "Favorable" : status === "unfavorable" ? "Unfavorable" : "On budget";
+  const label = status === "favorable" ? "Favorable" : status === "unfavorable" ? "Unfavorable" : "Within threshold";
   return (
     <Badge
       variant="outline"

@@ -12,7 +12,7 @@ const STATUS_CLASSES = {
 const STATUS_LABEL = {
   favorable: "favorable",
   unfavorable: "unfavorable",
-  neutral: "no change",
+  neutral: "within threshold",
 } as const;
 
 /** The headline change of a comparison: % for amounts, percentage points for ratios. */

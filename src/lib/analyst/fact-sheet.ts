@@ -4,6 +4,7 @@ import type { Comparison, MetricKind } from "@/lib/finance/variance";
 import { formatDkk, formatPercent, formatPp } from "@/lib/format";
 import { buildDashboard } from "@/lib/selectors/dashboard";
 import { buildVariance } from "@/lib/selectors/variance";
+import { isMaterialAmount } from "@/lib/finance/materiality";
 
 /**
  * The fact sheet: every figure the AI analyst is allowed to use, computed and formatted
@@ -12,7 +13,7 @@ import { buildVariance } from "@/lib/selectors/variance";
  * no transaction-level records.
  */
 
-export type FactStatus = "favorable" | "unfavorable" | "on budget" | "not applicable";
+export type FactStatus = "favorable" | "unfavorable" | "within threshold" | "not applicable";
 
 export interface Fact {
   id: string;
@@ -35,7 +36,7 @@ export interface FactSheet {
 }
 
 const statusOf = (s: Favorability, material = true): FactStatus =>
-  !material ? "on budget" : s === "favorable" ? "favorable" : s === "unfavorable" ? "unfavorable" : "on budget";
+  !material ? "within threshold" : s === "favorable" ? "favorable" : s === "unfavorable" ? "unfavorable" : "within threshold";
 
 function fmt(v: number | null, kind: MetricKind, signed = false) {
   return kind === "ratio" ? formatPercent(v, { signed }) : formatDkk(v, { signed });
@@ -109,7 +110,9 @@ export function buildFactSheet(dataset: Dataset, params: { period?: unknown; vie
   // Revenue price / volume / mix
   if (variance.pvm) {
     const pv = variance.pvm;
-    const s = (v: number): FactStatus => (v > 0 ? "favorable" : v < 0 ? "unfavorable" : "on budget");
+    // Same materiality as everywhere else (no % exists for an effect, so the DKK test applies).
+    const s = (v: number): FactStatus =>
+      !isMaterialAmount(v, null) ? "within threshold" : v > 0 ? "favorable" : "unfavorable";
     add({ group: "price-volume", label: "Revenue variance from volume (units)", value: formatDkk(pv.volume, { signed: true }), status: s(pv.volume) });
     add({ group: "price-volume", label: "Revenue variance from mix (category/channel)", value: formatDkk(pv.mix, { signed: true }), status: s(pv.mix) });
     add({ group: "price-volume", label: "Revenue variance from selling price", value: formatDkk(pv.price, { signed: true }), status: s(pv.price) });

@@ -10,7 +10,7 @@ How to write:
 - Write in clear, concise English for a finance audience. Lead with what matters most for EBITDA.
 - Refer to figures ONLY with their placeholder, for example {{F7}}. Never write digits, amounts, percentages or number words (such as "two" or "million") yourself; the system inserts the validated values. Statements that contain numbers outside placeholders are discarded.
 - Use only facts from the sheet. Do not use outside knowledge about the company, the market or the economy.
-- Each fact has a status (favorable, unfavorable, on budget). Use that status; do not reclassify it. "On budget" means the variance is below the company's materiality threshold.
+- Each fact has a status (favorable, unfavorable, within threshold). Use that status; do not reclassify it. "Within threshold" means the variance is too small to be material under the company's thresholds; do not describe it as exactly on budget.
 
 Keep facts, hypotheses and recommendations separate:
 - facts: observations that restate the sheet, each citing at least one placeholder. Describe what happened, never why.
