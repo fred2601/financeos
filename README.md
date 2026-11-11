@@ -29,41 +29,88 @@ analyst that cannot invent numbers.
   </tr>
   <tr>
     <td><img src="docs/screenshots/scenarios.png" alt="Scenario analysis" /></td>
-    <td><img src="docs/screenshots/analyst.png" alt="AI analyst with fact sheet" /></td>
+    <td><img src="docs/screenshots/analyst.png" alt="AI analyst: management summary, facts and hypotheses next to the fact sheet" /></td>
   </tr>
 </table>
+
+## Purpose
+
+FinanceOS shows how a finance business partner at a medium-sized Danish retailer would review
+performance, explain budget variances, build a forecast and test scenarios, with every
+number traceable and tested. It's a portfolio project. The company, **Fjordhus Retail A/S**,
+and all its data are fictional, and the app labels them as such on every page.
+
+## Architecture
+
+```mermaid
+flowchart LR
+  seed["Fictional dataset<br/>(generated, validated with Zod)"] --> finance["lib/finance<br/>pure, tested calculations"]
+  finance --> selectors["lib/selectors<br/>view-models per page"]
+  selectors --> pages["Pages & charts<br/>(display only)"]
+  selectors --> facts["lib/analyst<br/>fact sheet"]
+  facts --> route["/api/analyst<br/>(server only)"]
+  route -->|"fact sheet only"| claude["Claude API"]
+  claude -->|"text with {{F#}} placeholders"| validate["Validator<br/>rejects own numbers, causes in facts"]
+  validate --> pages
+```
+
+- **Next.js App Router** with server components; charts and inputs are client components.
+- **No database.** The fictional data ships with the app, and assumptions live in the URL, so
+  every view can be shared as a link.
+- **The API key lives only on the server.** The browser sends just `{ period, view }` to
+  `/api/analyst`.
 
 ## Design principles
 
 1. **One source of truth for every number.** All calculations live in pure, tested functions
    in `src/lib/finance/`. Pages and charts only display results.
 2. **Favorable/unfavorable follows the account, not the sign.** Costs above budget are red.
-   Variances under 1 % or 50 t.kr. count as on budget.
+   Small variances are shown as *within threshold* (see Financial methodology).
 3. **Missing is not zero.** A missing or undefined value shows as "n/a", never as a misleading 0.
 4. **Transparent models.** Every forecast and scenario figure can be traced back to a
    formula, and the page shows that formula with the actual numbers.
 5. **AI that cannot invent figures.** The model refers to facts by id (`{{F12}}`). The server
    rejects any statement with a number it didn't supply, then inserts the validated values.
 
-## Key definitions
+## Financial methodology
 
-- Revenue = units × average selling price
-- Gross profit = revenue − COGS; gross margin = gross profit ÷ revenue
-- EBITDA = gross profit − operating expenses (excludes depreciation & amortisation)
-- Variance = actual − budget; variance % = variance ÷ |budget|
-- Margin changes are in percentage points (pp)
+| Topic | Rule |
+|---|---|
+| Core P&L | Revenue = units × average selling price · Gross profit = revenue − COGS · EBITDA = gross profit − operating expenses (excludes D&A) · Margins = metric ÷ revenue |
+| Variance | Actual − budget; % variance = variance ÷ \|budget\| (a smaller-than-planned loss shows as positive) |
+| Favorable / unfavorable | By account direction: revenue and profit are higher-is-better, costs lower-is-better |
+| Materiality | A variance is material if it's ≥ 50 t.kr. **and** ≥ 1 %, **or** ≥ 1 mio. kr. whatever the %. Margins: ≥ 0,1 pp. Anything smaller is shown as *within threshold* |
+| Price / volume / mix | Three-way split by category × channel; volume + mix + price = total revenue variance exactly |
+| EBITDA bridge | Budget → volume & mix (at budget GP per unit) → price (100 % flow-through) → product cost → each cost account → actual |
+| Forecast | Month by month from FY2025 actuals: units × (1 + growth), price × (1 + change), margin + pp change, cost × (1 + growth) |
+| Scenarios | EBITDA = (1 + s) × (GP₀ + m × Revenue₀) − (1 + o) × Opex₀, with sensitivities per lever |
+| Missing data | Shown as "n/a", never as 0. Margins are n/a when revenue ≤ 0 |
 
 Full formulas, data schema and design decisions: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+The storyline built into the fictional data: [`docs/DATA.md`](docs/DATA.md).
+
+## Security
+
+- `ANTHROPIC_API_KEY` is read only by the server route. Nothing is prefixed `NEXT_PUBLIC_`,
+  and the client bundles contain no key or API host (checked).
+- `/api/analyst` accepts only same-origin `application/json` requests, validates input
+  strictly with Zod, and rebuilds the fact sheet on the server. No user-supplied text ever
+  reaches the model.
+- Cost controls: results are cached in Vercel's shared cache per period, with a per-client
+  rate limit. A spend limit on the key is the real cap.
+- Security headers: `nosniff`, strict referrer policy, framing denied, permissions policy.
+- Production dependencies: `npm audit --omit=dev` reports 0 vulnerabilities.
 
 ## Quality
 
-- **205 automated tests** (Vitest) across 13 files. They cover the finance engine, data
+- **216 automated tests** (Vitest) across 13 files. They cover the finance engine, data
   integrity of the seed, every view-model, and two financial QA suites with independent
   reconciliations: [`docs/qa/m3-forecast-qa.md`](docs/qa/m3-forecast-qa.md) and
   [`docs/qa/m4-scenarios-qa.md`](docs/qa/m4-scenarios-qa.md).
 - TypeScript strict mode, ESLint, and a production build check before every commit.
-- Accessibility: keyboard focus styles, a skip link, text alternatives for charts, and status
-  shown in text as well as colour.
+- Accessibility: keyboard focus styles, a skip link, an h1 → h2 heading outline, labelled
+  inputs, text alternatives for charts, and status shown in text as well as colour.
+- Production readiness review: [`docs/qa/production-readiness.md`](docs/qa/production-readiness.md).
 
 ## Tech stack
 
@@ -137,7 +184,10 @@ docs/                architecture, data storyline, roadmap, QA reports, demo scr
 - The forecast copies FY2025 seasonality and one-off effects. Drivers apply evenly to all months.
 - Scenario levers are company-wide, and costs don't flex automatically with sales.
 - There are no user accounts or database. Assumptions live in the URL.
-- AI hypotheses and recommendations are suggestions to review. Only the figures are guaranteed.
+- AI hypotheses and recommendations are suggestions to review. Only the figures, and the
+  wording checks on facts, are enforced.
+- The rate limit is per server instance, and there is no strict Content-Security-Policy yet.
+- Materiality thresholds are company-wide, not per account or department.
 - CSV/Excel import (roadmap M5) is not built yet.
 
 See [`docs/ROADMAP.md`](docs/ROADMAP.md) for the milestone history.
