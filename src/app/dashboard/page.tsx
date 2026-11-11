@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { Info } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import Link from "next/link";
+import { ArrowRight, Info } from "lucide-react";
+import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartLegend, EbitdaChart, MarginTrendChart, RevenueTrendChart } from "@/components/charts/dashboard-charts";
 import { CategoryTable } from "@/components/dashboard/category-table";
 import { DashboardSkeleton } from "@/components/dashboard/dashboard-skeleton";
 import { KpiCard } from "@/components/dashboard/kpi-card";
-import { PeriodControls } from "@/components/dashboard/period-controls";
+import { FilterBar } from "@/components/filters/filter-bar";
 import { PnlTable } from "@/components/dashboard/pnl-table";
 import { FictionalDataBadge } from "@/components/layout/fictional-data-badge";
 import { getDataset } from "@/lib/data/dataset";
@@ -45,7 +46,7 @@ async function DashboardContent({ searchParams }: Pick<PageProps<"/dashboard">, 
             {vm.rangeLabel} · actual vs budget and {vm.priorLabel.replace("vs ", "")} · DKK
           </p>
         </div>
-        <PeriodControls period={vm.period} view={vm.view} periods={vm.availablePeriods} />
+        <FilterBar state={{ period: vm.period, view: vm.view }} periods={vm.availablePeriods} />
       </header>
 
       <section aria-label="Key performance indicators" className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-5">
@@ -93,6 +94,14 @@ async function DashboardContent({ searchParams }: Pick<PageProps<"/dashboard">, 
           <CardHeader>
             <CardTitle>P&L summary</CardTitle>
             <CardDescription>{vm.rangeLabel} · actual vs budget, t.kr.</CardDescription>
+            <CardAction>
+              <Link
+                href={`/variance?period=${vm.period}&view=${vm.view}`}
+                className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
+              >
+                Variance analysis <ArrowRight className="size-3.5" aria-hidden />
+              </Link>
+            </CardAction>
           </CardHeader>
           <CardContent>
             <PnlTable rows={vm.pnl} />

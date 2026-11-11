@@ -1,6 +1,6 @@
 # FinanceOS — Architecture, Data Schema & Formulas
 
-> Status: approved 2026-11-11. Milestone 1 implemented.
+> Status: approved 2026-11-11. Milestones 1–2 implemented.
 > All company data in FinanceOS is **fictional** unless a user imports their own.
 
 ---
@@ -232,6 +232,43 @@ Why `/ |budget|`: if a budget is negative (e.g. budgeted EBITDA loss of −1m an
 dividing by the raw budget would flip the sign and show an improvement as −50%. Using the
 absolute value keeps "+50% = better than budget" intuitive.
 
+### Materiality (`lib/finance/materiality.ts`)
+
+A variance is only coloured favorable/unfavorable when it is **material**; otherwise it is
+"on budget" (neutral). Defaults:
+
+| Metric kind | Material when |
+|---|---|
+| Amount (DKK) | \|variance\| ≥ 50.000 kr. **and** \|variance %\| ≥ 1 % (or no budget to compare with) |
+| Ratio (margins) | \|change\| ≥ 0,1 pp |
+| Driver (units, ASP) | \|variance %\| ≥ 1 % |
+
+### Price / volume / mix (`lib/finance/price-volume.ts`)
+
+Segments = product category × channel. For segment *s*: U = units, P = ASP = revenue / units, C = COGS per unit.
+A = actual, B = budget.
+
+| Effect | Formula |
+|---|---|
+| Revenue volume | (ΣU_A − ΣU_B) × P̄_B, where P̄_B = budget revenue / budget units |
+| Revenue mix | Σ U_A,s × P_B,s − ΣU_A × P̄_B |
+| Revenue price | Σ (P_A,s − P_B,s) × U_A,s |
+| Segment volume / price | (U_A − U_B) × P_B and (P_A − P_B) × U_A |
+| GP volume & mix | Σ (U_A,s − U_B,s) × (P_B,s − C_B,s) |
+| GP price | Σ (P_A,s − P_B,s) × U_A,s (100 % flow-through) |
+| GP product cost | −Σ (C_A,s − C_B,s) × U_A,s |
+
+Each split reconciles exactly to the total variance (tested). If any segment has zero budget
+units, there is no budget price and the analysis returns `null` ("n/a").
+
+**EBITDA bridge:** budget EBITDA → GP volume & mix → price → product cost → each opex account
+(budget − actual) → actual EBITDA.
+
+### Filter scope on Budget vs actual
+- **Category** filters revenue, COGS and gross profit. Opex is not allocated to categories.
+- **Department** filters operating expenses. Revenue is not booked on departments.
+- EBITDA and the EBITDA bridge are always shown for the company as a whole.
+
 ### Correlation ≠ causality
 
 The app reports *what* changed (variances, trends). It does not state *why*. In the
@@ -255,4 +292,5 @@ AI analyst (M6), explanations must be labelled as **facts** (validated numbers),
 - No user accounts or persistence (by design, until needed).
 - Seed data is synthetic and simplified (no VAT, inventory, balance sheet or cash flow).
 - Rent is treated as operating expense (pre-IFRS 16 management view), so EBITDA is lower than an IFRS 16 EBITDA would be.
-- No materiality threshold yet: any non-zero variance is favorable/unfavorable, even if it rounds to 0,0 on screen (planned for M2).
+- Materiality thresholds are fixed company-wide (not per account or per period length).
+- Mix is measured on units across categories with very different prices; a value-based mix would give different (equally valid) splits.
