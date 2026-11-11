@@ -111,7 +111,7 @@ month of the fictional company, every number comes from tested functions, `npm t
 - [x] Numbers only via `{{F#}}` placeholders; server-side validation removes any other number; values inserted from the fact sheet
 - [x] Explicit consent before sending; key only in server env vars; 503 state when not configured
 - [x] Result cache and per-client rate limit; tests for fact sheet, validator, guards and route (mocked model)
-- [ ] Set `ANTHROPIC_API_KEY` in Vercel and verify a live analysis (owner action)
+- [x] `ANTHROPIC_API_KEY` set in Vercel; live analysis verified 2026-11-11 (figures match the app, 0 statements rejected)
 
 ### M7 — Polish
 - [ ] Responsive QA, accessibility pass, demo walkthrough script for interviews, screenshots in README
